@@ -26,12 +26,12 @@ func RankingUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, g
 	msg := embed.NewEmbed(session, orgMsg)
 	if err != nil {
 		msg.Title = config.Lang[guild.Lang].Error.Syntax
-		msg.Description = "`" + err.Error() + "`\n"
+		msg.Description = err.Error() + "\n"
 		msg.Color = embed.ColorPink
 	} else {
 		msg.Title = config.Lang[guild.Lang].Usage.Title + "ranking"
 	}
-	msg.Description += guild.Prefix + Ranking + " [page] [options]\n" + config.Lang[guild.Lang].Usage.Ranking.Desc
+	msg.Description += "`" + guild.Prefix + Ranking + " [page] [options]`\n" + config.Lang[guild.Lang].Usage.Ranking.Desc
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "[page]",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Page,
