@@ -9,7 +9,7 @@ db:
   parameter: ./db.sqlite
   tableprefix: vanilla_
 guild:
-  prefix: emoji.
+  prefix: v.
   lang: japanese
   recordbots: false
   weight:
