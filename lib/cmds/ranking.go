@@ -89,6 +89,10 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		RankingUsage(session, orgMsg, guild, errors.New("num must be positive"))
 		return
 	}
+	if *num > 25 {
+		RankingUsage(session, orgMsg, guild, errors.New("num must be 25 or less"))
+		return
+	}
 	if *period < 1 {
 		RankingUsage(session, orgMsg, guild, errors.New("period must be positive"))
 		return
