@@ -1,0 +1,18 @@
+debug: true
+help: https://github.com/tpc3/Vanilla/wiki
+discord:
+  token: 'your token here'
+  status: "Vanilla is running! | .help"
+  retry: 10
+db:
+  kind: sqlite3
+  parameter: ./db.sqlite
+  tableprefix: vanilla_
+guild:
+  prefix: emoji.
+  lang: japanese
+  recordbots: false
+  weight:
+    message: 10
+    reactnew: 10
+    reactadd: 2
