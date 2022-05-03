@@ -114,10 +114,10 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		rank++
 		var (
 			emojiId     string
-			point       int
 			description string
+			point       int
 		)
-		rows.Scan(&emojiId, &point, &description)
+		rows.Scan(&emojiId, &description, &point)
 		field := discordgo.MessageEmbedField{}
 		emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 		if err != nil {

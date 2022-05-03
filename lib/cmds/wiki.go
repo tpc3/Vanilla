@@ -168,10 +168,10 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		for rows.Next() {
 			var (
 				emojiId     string
-				point       int
 				description string
+				point       int
 			)
-			rows.Scan(&emojiId, &point, &description)
+			rows.Scan(&emojiId, &description, &point)
 			emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 			if err != nil {
 				UnknownError(session, orgMsg, &guild.Lang, err)
