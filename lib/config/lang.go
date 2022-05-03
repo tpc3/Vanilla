@@ -63,11 +63,12 @@ type configusagestr struct {
 }
 
 type rankingusagestr struct {
-	Desc   string
-	Page   string
-	Invert string
-	Num    string
-	Period string
+	Desc     string
+	Page     string
+	Invert   string
+	Num      string
+	Period   string
+	WithDesc string
 }
 
 var (
@@ -111,11 +112,12 @@ func loadLang() {
 				Weight: "それぞれの動作ごとのポイントを指定します。\nこのポイントはランキングに用いられます。\n変更したら必ずsyncを行ってください。\nデフォルトは" + strconv.Itoa(CurrentConfig.Guild.Weight.Message) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactnew) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactadd) + "です。",
 			},
 			Ranking: rankingusagestr{
-				Desc:   "絵文字のランキングを表示します。",
-				Page:   "何ページ目を見るか指定します。\n省略した場合1になります。",
-				Invert: "指定すると逆順になり、使われていない絵文字が確認できます。",
-				Num:    "1ページに何件入れるか指定します。\n省略した場合10になります。",
-				Period: "集計対象の期間を秒数で指定します。\n省略した場合2592000(30日)になります。",
+				Desc:     "絵文字のランキングを表示します。",
+				Page:     "何ページ目を見るか指定します。\n省略した場合1になります。",
+				Invert:   "指定すると逆順になり、使われていない絵文字が確認できます。",
+				Num:      "1ページに何件入れるか指定します。\n省略した場合10になります。",
+				Period:   "集計対象の期間を秒数で指定します。\n省略した場合2592000(30日)になります。",
+				WithDesc: "指定すると説明文付きで出力します。",
 			},
 			WikiDesc: "絵文字情報をポイント順にマークダウンで出力します",
 		},

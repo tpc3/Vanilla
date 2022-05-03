@@ -48,6 +48,10 @@ func RankingUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, g
 		Name:  "-p <period>\n--period <period>",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Period,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "-d\n--description",
+		Value: config.Lang[guild.Lang].Usage.Ranking.WithDesc,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 
@@ -55,10 +59,11 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 	var (
 		page   int
 		invert *struct{}
+		desc   *struct{}
 		num    *int
 		period *int64
 	)
-	unnamed, err := ParseParam(*message, map[string]any{"i": &invert, "n": &num, "p": &period}, map[string]any{"invert": &invert, "num": &num, "period": &period})
+	unnamed, err := ParseParam(*message, map[string]any{"i": &invert, "n": &num, "p": &period, "d": &desc}, map[string]any{"invert": &invert, "num": &num, "period": &period, "description": &desc})
 	if err != nil {
 		RankingUsage(session, orgMsg, guild, err)
 		return
@@ -108,10 +113,11 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 	for rows.Next() {
 		rank++
 		var (
-			emojiId string
-			point   int
+			emojiId     string
+			point       int
+			description string
 		)
-		rows.Scan(&emojiId, &point)
+		rows.Scan(&emojiId, &point, &description)
 		field := discordgo.MessageEmbedField{}
 		emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 		if err != nil {
@@ -120,6 +126,9 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		}
 		field.Name = strconv.Itoa(rank) + ". " + emoji.Name
 		field.Value = emoji.MessageFormat() + " " + strconv.FormatInt(int64(point), 10) + "pt"
+		if desc != nil {
+			field.Value += "\n" + description
+		}
 		msg.Fields = append(msg.Fields, &field)
 	}
 	ReplyEmbed(session, orgMsg, msg)

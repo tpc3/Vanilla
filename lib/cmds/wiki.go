@@ -143,11 +143,11 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		if len(splitMsg) == 2 {
 			unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period}, map[string]any{"invert": &invert, "period": &period})
 			if err != nil {
-				RankingUsage(session, orgMsg, guild, err)
+				WikiExportUsage(session, orgMsg, guild, err)
 				return
 			}
 			if len(unnamed) != 0 {
-				RankingUsage(session, orgMsg, guild, errors.New("too many arguments"))
+				WikiExportUsage(session, orgMsg, guild, errors.New("too many arguments"))
 				return
 			}
 		}
@@ -155,21 +155,10 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			period = &defaultPeriod
 		}
 		if *period < 1 {
-			RankingUsage(session, orgMsg, guild, errors.New("period must be positive"))
+			WikiExportUsage(session, orgMsg, guild, errors.New("period must be positive"))
 			return
 		}
-		rows, err := db.GetEmojis(&orgMsg.GuildID)
-		if err != nil {
-			UnknownError(session, orgMsg, &guild.Lang, err)
-		}
-		emojisDB := map[string]emoji{}
-		for rows.Next() {
-			e := emoji{}
-			rows.Scan(&e.id, &e.name, &e.description)
-			emojisDB[e.id] = e
-		}
-		rows.Close()
-		rows, err = db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil)
+		rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return
@@ -178,10 +167,11 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		md := ""
 		for rows.Next() {
 			var (
-				emojiId string
-				point   int
+				emojiId     string
+				point       int
+				description string
 			)
-			rows.Scan(&emojiId, &point)
+			rows.Scan(&emojiId, &point, &description)
 			emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 			if err != nil {
 				UnknownError(session, orgMsg, &guild.Lang, err)
@@ -194,7 +184,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			} else {
 				md += ".png)\n"
 			}
-			md += emojisDB[emojiId].description + "\n\n"
+			md += description + "\n\n"
 		}
 		_, err = buff.WriteString(md)
 		if err != nil {

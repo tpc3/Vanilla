@@ -141,7 +141,7 @@ func LoadGuild(id *string) *config.Guild {
 	// 	"GROUP BY emoji " +
 	// 	"ORDER BY sum(value) DESC " +
 	// 	"LIMIT ?,?")
-	rankingStmt[*id], err = DB.Prepare("SELECT emojis.id,sum(logs.value) " +
+	rankingStmt[*id], err = DB.Prepare("SELECT emojis.id,sum(logs.value),emojis.description " +
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
 		"ON emojis.id = logs.emoji AND logs.timeat > ? " +
@@ -151,7 +151,7 @@ func LoadGuild(id *string) *config.Guild {
 	if err != nil {
 		log.Fatal("Prepere rankingStmt error: ", err)
 	}
-	rankingInvertStmt[*id], err = DB.Prepare("SELECT emojis.id,sum(logs.value) " +
+	rankingInvertStmt[*id], err = DB.Prepare("SELECT emojis.id,sum(logs.value),emojis.description " +
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
 		"ON emojis.id = logs.emoji AND logs.timeat > ? " +
