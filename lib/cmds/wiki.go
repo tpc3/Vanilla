@@ -45,6 +45,7 @@ func WikiExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate
 }
 
 func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	splitMsg := strings.SplitN(*message, " ", 2)
 	switch splitMsg[0] {
 	case "import":
@@ -64,6 +65,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(resp.Body)
 		rawPage := buf.String()
+		session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🔽")
 		emojisRows, err := db.GetEmojis(&orgMsg.GuildID)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
@@ -81,6 +83,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		ignored := 0
 		update := 0
 		splitPage := strings.Split(rawPage, "### ")
+		session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🔄")
 		for i, v := range splitPage {
 			if i == 0 {
 				continue

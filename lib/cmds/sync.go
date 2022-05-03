@@ -20,6 +20,7 @@ type emoji struct {
 }
 
 func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
+	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	result := embed.NewEmbed(session, orgMsg)
 	result.Title = config.Lang[guild.Lang].Sync.Title
 	start := time.Now()
