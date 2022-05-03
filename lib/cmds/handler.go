@@ -63,6 +63,8 @@ func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		WikiCmd(session, orgMsg, guild, &param)
 	case Desc:
 		DescCmd(session, orgMsg, guild, &param)
+	case Help:
+		HelpCmd(session, orgMsg, guild, &param)
 	default:
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.NoCmd)
 	}
