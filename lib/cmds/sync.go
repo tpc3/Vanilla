@@ -44,43 +44,43 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	var updatedEmoji []emoji
 	var movedEmoji []emoji
 	var deletedEmoji []emoji
+	var dbDel []*string
+	var dbAdd []*emoji
 	for _, v := range *emojisDiscord {
 		if e, ok := emojisDB[v.ID]; ok {
 			delete(emojisNameDB, e.name)
 			e.discord = v
 			if e.name != v.Name {
-				_, err := db.DeleteEmoji(&orgMsg.GuildID, e.id)
-				if err != nil {
-					UnknownError(session, orgMsg, &guild.Lang, err)
-				}
-				_, err = db.AddEmoji(&orgMsg.GuildID, e.id, v.Name, e.description)
-				if err != nil {
-					UnknownError(session, orgMsg, &guild.Lang, err)
-				}
+				dbDel = append(dbDel, &e.id)
+				dbAdd = append(dbAdd, &e)
 				updatedEmoji = append(updatedEmoji, e)
 			}
 		} else if e, ok := emojisNameDB[v.Name]; ok {
 			delete(emojisNameDB, e.name)
 			e.discord = v
-			_, err := db.DeleteEmoji(&orgMsg.GuildID, e.id)
-			if err != nil {
-				UnknownError(session, orgMsg, &guild.Lang, err)
-			}
-			_, err = db.AddEmoji(&orgMsg.GuildID, v.ID, e.name, e.description)
-			if err != nil {
-				UnknownError(session, orgMsg, &guild.Lang, err)
-			}
+			dbDel = append(dbDel, &e.id)
+			dbAdd = append(dbAdd, &e)
 			movedEmoji = append(movedEmoji, e)
 		} else {
-			_, err := db.AddEmoji(&orgMsg.GuildID, v.ID, v.Name, "")
-			if err != nil {
-				UnknownError(session, orgMsg, &guild.Lang, err)
-			}
-			addedEmoji = append(addedEmoji, emoji{id: v.ID, name: v.Name, description: "", discord: v})
+			e = emoji{id: v.ID, name: v.Name, description: "", discord: v}
+			dbAdd = append(dbAdd, &e)
+			addedEmoji = append(addedEmoji, e)
 		}
 	}
 	for _, v := range emojisNameDB {
 		deletedEmoji = append(deletedEmoji, v)
+	}
+	for _, v := range dbDel {
+		_, err = db.DeleteEmoji(&orgMsg.GuildID, *v)
+		if err != nil {
+			UnknownError(session, orgMsg, &guild.Lang, err)
+		}
+	}
+	for _, v := range dbAdd {
+		_, err = db.AddEmoji(&orgMsg.GuildID, v.discord.ID, v.discord.Name, v.description)
+		if err != nil {
+			UnknownError(session, orgMsg, &guild.Lang, err)
+		}
 	}
 	if len(addedEmoji) != 0 {
 		field := discordgo.MessageEmbedField{}

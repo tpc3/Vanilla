@@ -165,6 +165,12 @@ func LoadGuild(id *string) *config.Guild {
 	if err != nil {
 		log.Fatal("Prepere addEmojiStmt error: ", err)
 	}
+	deleteEmojiStmt[*id], err = DB.Prepare("DELETE " +
+		"FROM " + emojisTable + " " +
+		"WHERE id = ?")
+	if err != nil {
+		log.Fatal("Prepere deleteEmojiStmt error: ", err)
+	}
 	getEmojisStmt[*id], err = DB.Prepare("SELECT * " +
 		"FROM " + emojisTable)
 	if err != nil {
@@ -187,12 +193,6 @@ func LoadGuild(id *string) *config.Guild {
 		"WHERE type = ? AND value <> ?")
 	if err != nil {
 		log.Fatal("Prepere syncValueStmt error: ", err)
-	}
-	deleteEmojiStmt[*id], err = DB.Prepare("DELETE " +
-		"FROM " + emojisTable + " " +
-		"WHERE id = ?")
-	if err != nil {
-		log.Fatal("Prepere deleteEmojiStmt error: ", err)
 	}
 	deleteLogStmt[*id], err = DB.Prepare("DELETE " +
 		"FROM " + logsTable + " " +
@@ -291,6 +291,10 @@ func AddEmoji(guildId *string, emojiId string, emojiName string, description str
 	return addEmojiStmt[*guildId].Exec(emojiId, emojiName, description)
 }
 
+func DeleteEmoji(guildId *string, emojiId string) (sql.Result, error) {
+	return deleteEmojiStmt[*guildId].Exec(emojiId)
+}
+
 func GetEmojis(guildId *string) (*sql.Rows, error) {
 	return getEmojisStmt[*guildId].Query()
 }
@@ -301,10 +305,6 @@ func GetEmoji(guildId *string, emojiId string) *sql.Row {
 
 func GetEmojiByName(guildId *string, emojiName string) *sql.Row {
 	return getEmojiByNameStmt[*guildId].QueryRow(emojiName)
-}
-
-func DeleteEmoji(guildId *string, emojiId string) (sql.Result, error) {
-	return deleteEmojiStmt[*guildId].Exec(emojiId)
 }
 
 func DeleteLogEmoji(guildId *string, emojiId string) (sql.Result, error) {

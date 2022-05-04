@@ -41,6 +41,6 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 	}
 
 	if config.CurrentConfig.Debug {
-		log.Print("Processed in ", time.Since(start).Milliseconds(), "ms.")
+		log.Print("Reaction processed in ", time.Since(start).Milliseconds(), "ms.")
 	}
 }
