@@ -91,7 +91,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			splitEmoji := strings.SplitN(v, "\n", 3)
 			name := splitEmoji[0]
 			id := strings.SplitN(splitEmoji[1], "https://cdn.discordapp.com/emojis/", 2)[1]
-			id = strings.TrimSuffix(id, ".png)")
+			id = strings.TrimSuffix(id, ".webp)")
 			id = strings.TrimSuffix(id, ".gif)")
 			var emoji emoji
 			var ok bool
@@ -182,7 +182,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			if emoji.Animated {
 				md += ".gif)\n"
 			} else {
-				md += ".png)\n"
+				md += ".webp)\n"
 			}
 			md += description + "\n\n"
 		}
