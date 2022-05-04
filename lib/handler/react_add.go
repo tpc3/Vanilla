@@ -15,21 +15,15 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 		start = time.Now()
 	}
 
+	db.CacheReacted(&orgReaction.MessageID, &orgReaction.Emoji.ID)
+
 	if orgReaction.Emoji.ID != "" {
-		msg, err := session.ChannelMessage(orgReaction.ChannelID, orgReaction.MessageID)
+		count, err := db.GetReacted(session, &orgReaction.ChannelID, &orgReaction.MessageID, &orgReaction.Emoji.ID)
 		if err != nil {
-			log.Print("WARN: failed to get ChannelMessage to get reaction: ", err)
+			log.Print("WARN: failed to get IsReacted: ", err)
 			return
 		}
-
-		count := 0
-		for _, v := range msg.Reactions {
-			if v.Emoji.ID == orgReaction.Emoji.ID {
-				count = v.Count
-				break
-			}
-		}
-		if count == 0 {
+		if count <= 0 {
 			log.Print("WARN: failed to find added reaction")
 			return
 		}

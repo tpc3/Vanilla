@@ -26,6 +26,8 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 		}
 	}()
 
+	db.MessageRecieved(orgMsg.Message)
+
 	// Ignore all messages created by the bot itself
 	// This isn't required in this specific example but it's a good practice.
 	if orgMsg.Author.ID == session.State.User.ID || orgMsg.Content == "" {
