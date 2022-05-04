@@ -20,6 +20,10 @@ type Config struct {
 		Tableprefix string
 	}
 	Guild Guild
+	Kelp  struct {
+		Description string
+		Image       string
+	}
 }
 
 type Guild struct {

@@ -1,9 +1,8 @@
 debug: true
 help: https://github.com/tpc3/Vanilla/wiki
 discord:
-  token: 'your token here'
+  token: "YOUR_TOKEN_HERE"
   status: "Vanilla is running! | emoji.help"
-  retry: 10
 db:
   kind: sqlite3
   parameter: ./db.sqlite
@@ -16,3 +15,6 @@ guild:
     message: 10
     reactnew: 10
     reactadd: 2
+kelp:
+  description: ""
+  image: ""
