@@ -82,6 +82,8 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		matchName := 0
 		ignored := 0
 		update := 0
+		var dbDel []*string
+		var dbAdd []*emoji
 		splitPage := strings.Split(rawPage, "### ")
 		session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🔄")
 		for i, v := range splitPage {
@@ -105,15 +107,23 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			}
 			description := strings.TrimSpace(splitEmoji[2])
 			if description != emoji.description {
-				_, err := db.DeleteEmoji(&orgMsg.GuildID, emoji.id)
-				if err != nil {
-					UnknownError(session, orgMsg, &guild.Lang, err)
-				}
-				_, err = db.AddEmoji(&orgMsg.GuildID, emoji.id, emoji.name, description)
-				if err != nil {
-					UnknownError(session, orgMsg, &guild.Lang, err)
-				}
+				dbDel = append(dbDel, &emoji.id)
+				emoji.description = description
+				dbAdd = append(dbAdd, &emoji)
 				update++
+			}
+		}
+		session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🔼")
+		for _, v := range dbDel {
+			_, err = db.DeleteEmoji(&orgMsg.GuildID, *v)
+			if err != nil {
+				UnknownError(session, orgMsg, &guild.Lang, err)
+			}
+		}
+		for _, v := range dbAdd {
+			_, err = db.AddEmoji(&orgMsg.GuildID, v.id, v.name, v.description)
+			if err != nil {
+				UnknownError(session, orgMsg, &guild.Lang, err)
 			}
 		}
 		msg := embed.NewEmbed(session, orgMsg)
