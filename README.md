@@ -1,5 +1,5 @@
 # Vanilla
-[![Go Report Card](https://goreportcard.com/badge/github.com/tpc3/vanilla)](https://goreportcard.com/report/github.com/tpc3/kotone-dive)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tpc3/vanilla)](https://goreportcard.com/report/github.com/tpc3/vanilla)
 [![Docker Image CI](https://github.com/tpc3/Vanilla/actions/workflows/docker-image.yml/badge.svg)](https://github.com/tpc3/Vanilla/actions/workflows/docker-image.yml)
 <!-- [![Go](https://github.com/tpc3/Vanilla/actions/workflows/go.yml/badge.svg)](https://github.com/tpc3/Vanilla/actions/workflows/go.yml) -->
 
