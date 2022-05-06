@@ -1,7 +1,7 @@
 # Vanilla
 [![Go Report Card](https://goreportcard.com/badge/github.com/tpc3/vanilla)](https://goreportcard.com/report/github.com/tpc3/vanilla)
 [![Docker Image CI](https://github.com/tpc3/Vanilla/actions/workflows/docker-image.yml/badge.svg)](https://github.com/tpc3/Vanilla/actions/workflows/docker-image.yml)
-[![Go](https://github.com/tpc3/Vanilla/actions/workflows/go.yml/badge.svg)](https://github.com/tpc3/Vanilla/actions/workflows/go.yml)
+<!-- [![Go](https://github.com/tpc3/Vanilla/actions/workflows/go.yml/badge.svg)](https://github.com/tpc3/Vanilla/actions/workflows/go.yml) -->
 
 絵文字の統計を取るためのDiscordBotです。
 
@@ -18,9 +18,10 @@
 
 ## Use
 ### Simple
-1. [Releases](https://github.com/tpc3/Vanilla/releases)から実行ファイルをダウンロード
-    - 実行ファイルは`artifact.zip`の中にあるかもしれません。
-    - 最新版が使いたいですか？[Actions](https://github.com/tpc3/Vanilla/actions/workflows/go.yml)からダウンロードできます。
+1. ~~[Releases](https://github.com/tpc3/Vanilla/releases)から実行ファイルをダウンロード~~
+    - ~~実行ファイルは`artifact.zip`の中にあるかもしれません。~~
+    - ~~最新版が使いたいですか？[Actions](https://github.com/tpc3/Vanilla/actions/workflows/go.yml)からダウンロードできます。~~
+    - 現在実行ファイルを作成するCIが動いていないため、Dockerを使用するか自分でビルドしてください。
 1. [config.yamlをダウンロード](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. config.yamlにBotのTokenを入力
 1. `./Vanilla`
