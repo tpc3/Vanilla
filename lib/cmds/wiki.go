@@ -178,13 +178,18 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		for rows.Next() {
 			var (
 				emojiId     string
+				emojiName   string
 				description string
 				point       int
 			)
-			rows.Scan(&emojiId, &description, &point)
+			rows.Scan(&emojiId, &emojiName, &description, &point)
 			emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 			if err != nil {
 				UnknownError(session, orgMsg, &guild.Lang, err)
+				return
+			}
+			if emoji == nil {
+				ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.DeletedEmojiFound)
 				return
 			}
 			md += "### " + emoji.Name + "\n"

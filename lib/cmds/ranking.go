@@ -114,18 +114,24 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		rank++
 		var (
 			emojiId     string
+			emojiName   string
 			description string
 			point       int
 		)
-		rows.Scan(&emojiId, &description, &point)
+		rows.Scan(&emojiId, &emojiName, &description, &point)
 		field := discordgo.MessageEmbedField{}
 		emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return
 		}
-		field.Name = strconv.Itoa(rank) + ". " + emoji.Name
-		field.Value = emoji.MessageFormat() + " " + strconv.FormatInt(int64(point), 10) + "pt"
+		field.Name = strconv.Itoa(rank) + ". " + emojiName
+		if emoji == nil {
+			field.Value = "❌ " + strconv.FormatInt(int64(point), 10) + "pt"
+			msg.Description = "WARNING: ❌\n" + config.Lang[guild.Lang].Error.DeletedEmojiFound
+		} else {
+			field.Value = emoji.MessageFormat() + " " + strconv.FormatInt(int64(point), 10) + "pt"
+		}
 		if desc != nil {
 			field.Value += "\n" + description
 		}

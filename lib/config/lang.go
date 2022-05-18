@@ -14,15 +14,16 @@ type Strings struct {
 }
 
 type errorstr struct {
-	Title         string
-	UnknownTitle  string
-	UnknownDesc   string
-	NoCmd         string
-	SubCmd        string
-	Syntax        string
-	SyntaxDesc    string
-	Onefile       string
-	EmojiNotFound string
+	Title             string
+	UnknownTitle      string
+	UnknownDesc       string
+	NoCmd             string
+	SubCmd            string
+	Syntax            string
+	SyntaxDesc        string
+	Onefile           string
+	EmojiNotFound     string
+	DeletedEmojiFound string
 }
 
 type usagestr struct {
@@ -122,14 +123,15 @@ func loadLang() {
 			WikiDesc: "絵文字情報をポイント順にマークダウンで出力します",
 		},
 		Error: errorstr{
-			UnknownTitle:  "不明なエラーが発生しました。",
-			UnknownDesc:   "この問題は管理者に報告されます。",
-			NoCmd:         "コマンドが見つかりません。",
-			SubCmd:        "サブコマンドが不正です。",
-			Syntax:        "構文エラー",
-			SyntaxDesc:    "パラメータの解析に失敗しました。\nコマンドの構文が正しいか確認してください。",
-			Onefile:       "1つのファイルを添付する必要があります",
-			EmojiNotFound: "該当する絵文字が見つかりません",
+			UnknownTitle:      "不明なエラーが発生しました。",
+			UnknownDesc:       "この問題は管理者に報告されます。",
+			NoCmd:             "コマンドが見つかりません。",
+			SubCmd:            "サブコマンドが不正です。",
+			Syntax:            "構文エラー",
+			SyntaxDesc:        "パラメータの解析に失敗しました。\nコマンドの構文が正しいか確認してください。",
+			Onefile:           "1つのファイルを添付する必要があります",
+			EmojiNotFound:     "該当する絵文字が見つかりません",
+			DeletedEmojiFound: "Discord上で発見できない絵文字があります。\n`sync`を行い、削除された絵文字の`forgot`をすべて完了させてください。",
 		},
 	}
 	Lang["english"] = Strings{
@@ -177,14 +179,15 @@ func loadLang() {
 			WikiDesc: "Export emoji ranking with description at markdown",
 		},
 		Error: errorstr{
-			UnknownTitle:  "Unknown Error!",
-			UnknownDesc:   "This will be reported.",
-			NoCmd:         "Command not found.",
-			SubCmd:        "Invalid subcommand.",
-			Syntax:        "Syntax error",
-			SyntaxDesc:    "Failed to parse parameter.\nCheck your command syntax.",
-			Onefile:       "You should to attach 1 file",
-			EmojiNotFound: "Failed to find emoji",
+			UnknownTitle:      "Unknown Error!",
+			UnknownDesc:       "This will be reported.",
+			NoCmd:             "Command not found.",
+			SubCmd:            "Invalid subcommand.",
+			Syntax:            "Syntax error",
+			SyntaxDesc:        "Failed to parse parameter.\nCheck your command syntax.",
+			Onefile:           "You should to attach 1 file",
+			EmojiNotFound:     "Failed to find emoji",
+			DeletedEmojiFound: "There are emoji which can't be found in Discord.\n\nDo `sync`, And complete `forgot`.",
 		},
 	}
 }
