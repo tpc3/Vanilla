@@ -124,7 +124,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		field.Name = config.Lang[guild.Lang].Sync.DeletedEmoji
 		cleanCommand := guild.Prefix + Forget
 		for i, v := range deletedEmoji {
-			field.Value = v.id + " " + v.name + "\n"
+			field.Value += v.id + " " + v.name + "\n"
 			cleanCommand += " " + v.id
 			if len(field.Value) > 900 {
 				field.Value += config.Lang[guild.Lang].Sync.OverEmoji + strconv.Itoa(len(deletedEmoji)-(i+1))
