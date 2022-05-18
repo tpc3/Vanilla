@@ -93,7 +93,7 @@ func ParseParam(param string, shortParams map[string]any, longParams map[string]
 			chars := strings.Split(strings.TrimPrefix(*processing, "-"), "")
 			for i, v := range chars {
 				if shortParams[v] == nil {
-					return nil, errors.New("not found short parametor: " + v)
+					return nil, errors.New("not found short parameter: " + v)
 				}
 				if i+1 == len(chars) {
 					switch p := (shortParams[v]).(type) {
