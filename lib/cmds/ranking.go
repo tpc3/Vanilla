@@ -18,7 +18,7 @@ var (
 )
 
 func init() {
-	defaultNum = 5
+	defaultNum = 10
 	defaultPeriod = 2592000
 }
 
