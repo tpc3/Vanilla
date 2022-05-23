@@ -67,6 +67,10 @@ func HandleCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		HelpCmd(session, orgMsg, guild, &param)
 	case Kelp:
 		KelpCmd(session, orgMsg, guild, &param)
+	case Export:
+		ExportCmd(session, orgMsg, guild, &param)
+	case Transfer:
+		TransferCmd(session, orgMsg, guild, &param)
 	default:
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.NoCmd)
 	}

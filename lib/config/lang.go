@@ -22,15 +22,17 @@ type errorstr struct {
 	Syntax            string
 	SyntaxDesc        string
 	Onefile           string
+	Brokenfile        string
 	EmojiNotFound     string
 	DeletedEmojiFound string
 }
 
 type usagestr struct {
-	Title    string
-	Config   configusagestr
-	Ranking  rankingusagestr
-	WikiDesc string
+	Title      string
+	Config     configusagestr
+	Ranking    rankingusagestr
+	WikiDesc   string
+	ExportDesc string
 }
 
 type syncstr struct {
@@ -120,7 +122,8 @@ func loadLang() {
 				Period:   "集計対象の期間を秒数で指定します。\n省略した場合2592000(30日)になります。",
 				WithDesc: "指定すると説明文付きで出力します。",
 			},
-			WikiDesc: "絵文字情報をポイント順にマークダウンで出力します",
+			WikiDesc:   "絵文字情報をポイント順にマークダウンで出力します",
+			ExportDesc: "絵文字の名前とURLをポイント順にリストとしてファイル出力します",
 		},
 		Error: errorstr{
 			UnknownTitle:      "不明なエラーが発生しました。",
@@ -130,6 +133,7 @@ func loadLang() {
 			Syntax:            "構文エラー",
 			SyntaxDesc:        "パラメータの解析に失敗しました。\nコマンドの構文が正しいか確認してください。",
 			Onefile:           "1つのファイルを添付する必要があります",
+			Brokenfile:        "ファイルが壊れています",
 			EmojiNotFound:     "該当する絵文字が見つかりません",
 			DeletedEmojiFound: "Discord上で発見できない絵文字があります。\n`sync`を行い、削除された絵文字の`forgot`をすべて完了させてください。",
 		},
@@ -176,7 +180,8 @@ func loadLang() {
 				Period:   "Specify the period of summary in seconds.\nDefaults to 2592000(30 days).",
 				WithDesc: "If specify, ranking will be printed with emoji description.",
 			},
-			WikiDesc: "Export emoji ranking with description at markdown",
+			WikiDesc:   "Export emoji ranking with description at markdown",
+			ExportDesc: "Export emoji ranking with name and URL to file",
 		},
 		Error: errorstr{
 			UnknownTitle:      "Unknown Error!",
@@ -186,6 +191,7 @@ func loadLang() {
 			Syntax:            "Syntax error",
 			SyntaxDesc:        "Failed to parse parameter.\nCheck your command syntax.",
 			Onefile:           "You should to attach 1 file",
+			Brokenfile:        "Attached file is broken",
 			EmojiNotFound:     "Failed to find emoji",
 			DeletedEmojiFound: "There are emoji which can't be found in Discord.\n\nDo `sync`, And complete `forgot`.",
 		},
