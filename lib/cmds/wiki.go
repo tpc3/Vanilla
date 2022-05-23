@@ -24,18 +24,10 @@ func WikiExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate
 	} else {
 		msg.Title = config.Lang[guild.Lang].Usage.Title + "wiki export"
 	}
-	msg.Description += guild.Prefix + Wiki + " export [page] [options]\n" + config.Lang[guild.Lang].Usage.Ranking.Desc
-	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "[page]",
-		Value: config.Lang[guild.Lang].Usage.Ranking.Page,
-	})
+	msg.Description += guild.Prefix + Wiki + " export [options]\n" + config.Lang[guild.Lang].Usage.WikiDesc
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "-i\n--invert",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Invert,
-	})
-	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "-n <number per a page>\n--num <number per a page>",
-		Value: config.Lang[guild.Lang].Usage.Ranking.Num,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "-p <period>\n--period <period>",
@@ -195,9 +187,9 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			md += "### " + emoji.Name + "\n"
 			md += "![" + emoji.Name + "](https://cdn.discordapp.com/emojis/" + emoji.ID
 			if emoji.Animated {
-				md += ".gif)\n"
+				md += ".gif\n"
 			} else {
-				md += ".webp)\n"
+				md += ".webp\n"
 			}
 			md += description + "\n\n"
 		}
