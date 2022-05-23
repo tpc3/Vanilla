@@ -25,6 +25,7 @@ type errorstr struct {
 	Brokenfile        string
 	EmojiNotFound     string
 	DeletedEmojiFound string
+	ManageEmojiPerm   string
 }
 
 type usagestr struct {
@@ -136,6 +137,7 @@ func loadLang() {
 			Brokenfile:        "ファイルが壊れています",
 			EmojiNotFound:     "該当する絵文字が見つかりません",
 			DeletedEmojiFound: "Discord上で発見できない絵文字があります。\n`sync`を行い、削除された絵文字の`forgot`をすべて完了させてください。",
+			ManageEmojiPerm:   "コマンド実行者に`絵文字の管理`権限が必要です",
 		},
 	}
 	Lang["english"] = Strings{
@@ -194,6 +196,7 @@ func loadLang() {
 			Brokenfile:        "Attached file is broken",
 			EmojiNotFound:     "Failed to find emoji",
 			DeletedEmojiFound: "There are emoji which can't be found in Discord.\n\nDo `sync`, And complete `forgot`.",
+			ManageEmojiPerm:   "You don't have permission `Manage Emojis`",
 		},
 	}
 }

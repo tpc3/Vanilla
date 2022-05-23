@@ -14,6 +14,16 @@ import (
 const Transfer = "transfer"
 
 func TransferCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
+	perm, err := session.State.MessagePermissions(orgMsg.Message)
+	if err != nil {
+		UnknownError(session, orgMsg, &guild.Lang, err)
+		return
+	}
+	if perm&discordgo.PermissionManageEmojis == 0 {
+		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.ManageEmojiPerm)
+		return
+	}
+
 	if len(orgMsg.Attachments) != 1 {
 		ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.Onefile)
 		return
