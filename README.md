@@ -24,6 +24,9 @@ Discord Bot to collect statistics of custom emojis.
 1. `docker run --rm -it -v $(PWD):/data ghcr.io/tpc3/vanilla`
 1. use `v.sync` command in your guild
 
+#### invite hint
+https://discord.com/api/oauth2/authorize?client_id=XXXXXXXXXXXXXXXXXX&permissions=275951766592&scope=bot
+
 ## Build
 1. Clone this repository
 1. `go build`
