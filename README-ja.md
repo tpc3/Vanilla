@@ -25,13 +25,13 @@
 1. [config.yamlをダウンロード](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. config.yamlにBotのTokenを入力
 1. `./Vanilla`
-1. Discordサーバーで`emoji.sync`コマンドを実行
+1. Discordサーバーで`v.sync`コマンドを実行
 
 ### Docker
 1. [config.yamlをダウンロード](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. config.yamlにBotのTokenを入力
 1. `docker run --rm -it -v $(PWD):/data ghcr.io/tpc3/vanilla`
-1. Discordサーバーで`emoji.sync`コマンドを実行
+1. Discordサーバーで`v.sync`コマンドを実行
 
 ## ビルド
 1. このリポジトリをcloneする

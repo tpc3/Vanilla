@@ -16,13 +16,13 @@ Discord Bot to collect statistics of custom emojis.
 1. [Download config.yaml](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. Enter your token to config.yaml
 1. `./Vanilla`
-1. use `emoji.sync` command in your guild
+1. use `v.sync` command in your guild
 
 ### Docker
 1. [Download config.yaml](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. Enter your token to config.yaml
 1. `docker run --rm -it -v $(PWD):/data ghcr.io/tpc3/vanilla`
-1. use `emoji.sync` command in your guild
+1. use `v.sync` command in your guild
 
 ## Build
 1. Clone this repository
