@@ -187,9 +187,9 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			md += "### " + emoji.Name + "\n"
 			md += "![" + emoji.Name + "](https://cdn.discordapp.com/emojis/" + emoji.ID
 			if emoji.Animated {
-				md += ".gif\n"
+				md += ".gif)\n"
 			} else {
-				md += ".webp\n"
+				md += ".webp)\n"
 			}
 			md += description + "\n\n"
 		}
