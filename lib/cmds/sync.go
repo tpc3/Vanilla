@@ -131,7 +131,10 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				break
 			}
 		}
-		field.Value += config.Lang[guild.Lang].Sync.ToCleanEmoji + "`" + cleanCommand + "`"
+		result.Fields = append(result.Fields, &field)
+		field = discordgo.MessageEmbedField{}
+		field.Name = config.Lang[guild.Lang].Sync.ToCleanEmoji
+		field.Value = "`" + cleanCommand + "`"
 		result.Fields = append(result.Fields, &field)
 	}
 	result.Description += "check emoji: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
