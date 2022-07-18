@@ -117,13 +117,21 @@ func LoadGuild(id *string) *config.Guild {
 		}
 		if dbVersion <= 1 {
 			log.Print("WARN: Updating guild from version 1")
-			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD " +
-				"bot BIT DEFAULT 0 NOT NULL," +
-				"userid BIGINT DEFAULT 0 NOT NULL," +
-				"channelid BIGINT DEFAULT 0 NOT NULL," +
-				"messageid BIGINT DEFAULT 0 NOT NULL")
+			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD COLUMN bot BIT DEFAULT 0 NOT NULL")
 			if err != nil {
-				log.Fatal("Update log_DB from version 1 error: ", err)
+				log.Fatal("Update log_DB from version 1 error 01: ", err)
+			}
+			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD COLUMN userid BIGINT DEFAULT 0 NOT NULL")
+			if err != nil {
+				log.Fatal("Update log_DB from version 1 error 02: ", err)
+			}
+			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD COLUMN channelid BIGINT DEFAULT 0 NOT NULL")
+			if err != nil {
+				log.Fatal("Update log_DB from version 1 error 03: ", err)
+			}
+			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD COLUMN messageid BIGINT DEFAULT 0 NOT NULL")
+			if err != nil {
+				log.Fatal("Update log_DB from version 1 error 04: ", err)
 			}
 			_, err := setDBverStmt.Exec(2, id)
 			if err != nil {
