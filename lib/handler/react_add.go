@@ -28,9 +28,9 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 			return
 		}
 		if count == 1 {
-			db.AddLog(&orgReaction.GuildID, db.REACTNEW, &orgReaction.Emoji.ID)
+			db.AddLog(&orgReaction.GuildID, db.REACTNEW, &orgReaction.Emoji.ID, orgReaction.Member.User.Bot)
 		} else {
-			db.AddLog(&orgReaction.GuildID, db.REACTADD, &orgReaction.Emoji.ID)
+			db.AddLog(&orgReaction.GuildID, db.REACTADD, &orgReaction.Emoji.ID, orgReaction.Member.User.Bot)
 		}
 	}
 

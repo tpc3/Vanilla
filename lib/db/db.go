@@ -12,6 +12,8 @@ import (
 )
 
 var DB *sql.DB
+var getDBverStmt *sql.Stmt
+var setDBverStmt *sql.Stmt
 var loadGuildStmt *sql.Stmt
 var insertGuildStmt *sql.Stmt
 var updateGuildStmt *sql.Stmt
@@ -41,23 +43,36 @@ func init() {
 		"db_version INT DEFAULT " + strconv.Itoa(db_version) + "," +
 		"prefix VARCHAR," +
 		"lang VARCHAR," +
-		"bots BIT," +
 		"msgweight INT," +
 		"newreactweight INT," +
 		"addreactweight INT)")
 	if err != nil {
 		log.Fatal("Create guild table error:", err)
 	}
+	_, err = DB.Exec("ALTER TABLE " + config.CurrentConfig.Db.Tableprefix + "guilds DROP COLUMN bots")
+	if err == nil {
+		log.Print("WARN: Database update succesfully")
+	} else {
+		log.Print("FINE: Guilds DB up-to-date!")
+	}
+	getDBverStmt, err = DB.Prepare("SELECT db_version FROM " + config.CurrentConfig.Db.Tableprefix + "guilds WHERE " + "id = ?")
+	if err != nil {
+		log.Fatal("Prepere getDBverStmt error:", err)
+	}
+	setDBverStmt, err = DB.Prepare("UPDATE " + config.CurrentConfig.Db.Tableprefix + "guilds SET db_version = ? WHERE id = ?")
+	if err != nil {
+		log.Fatal("Prepere setDBverStmt error:", err)
+	}
 	loadGuildStmt, err = DB.Prepare("SELECT * FROM " + config.CurrentConfig.Db.Tableprefix + "guilds WHERE " + "id = ?")
 	if err != nil {
 		log.Fatal("Prepere loadGuildStmt error:", err)
 	}
-	insertGuildStmt, err = DB.Prepare("INSERT INTO " + config.CurrentConfig.Db.Tableprefix + "guilds(id,prefix,lang,bots,msgweight,newreactweight,addreactweight) VALUES(?,?,?,?,?,?,?)")
+	insertGuildStmt, err = DB.Prepare("INSERT INTO " + config.CurrentConfig.Db.Tableprefix + "guilds(id,prefix,lang,msgweight,newreactweight,addreactweight) VALUES(?,?,?,?,?,?)")
 	if err != nil {
 		log.Fatal("Prepere insertGuildStmt error:", err)
 	}
 	updateGuildStmt, err = DB.Prepare("UPDATE " + config.CurrentConfig.Db.Tableprefix + "guilds " +
-		"SET db_version = ?, prefix = ?, lang = ?, bots = ?, msgweight = ?, newreactweight = ?, addreactweight = ? " +
+		"SET db_version = ?, prefix = ?, lang = ?, msgweight = ?, newreactweight = ?, addreactweight = ? " +
 		"WHERE id = ?")
 	if err != nil {
 		log.Fatal("Prepere updateGuildStmt error:", err)
@@ -87,22 +102,33 @@ func LoadGuild(id *string) *config.Guild {
 	if exists {
 		return val
 	}
-	var guild config.Guild
-	rows, err := loadGuildStmt.Query(id)
+	rows, err := getDBverStmt.Query(id)
 	if err != nil {
-		log.Fatal("LoadGuild query error:" + err.Error())
+		log.Fatal("GetDBver query error:" + err.Error())
 	}
-	defer rows.Close()
 	emojisTable := config.CurrentConfig.Db.Tableprefix + *id + "_emojis"
 	logsTable := config.CurrentConfig.Db.Tableprefix + *id + "_logs"
+	var dbVersion int
 	if rows.Next() {
-		var guildID int64
-		var dbVersion int
-		err := rows.Scan(&guildID, &dbVersion, &guild.Prefix, &guild.Lang, &guild.Recordbots, &guild.Weight.Message, &guild.Weight.Reactnew, &guild.Weight.Reactadd)
+		err := rows.Scan(&dbVersion)
+		rows.Close()
 		if err != nil {
-			log.Fatal("LoadGuild Scan error:" + err.Error())
+			log.Fatal("GetDBver Scan error:" + err.Error())
+		}
+		if dbVersion <= 1 {
+			log.Print("WARN: Updating guild from version 1")
+			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD " +
+				"bot BIT DEFAULT 0 NOT NULL")
+			if err != nil {
+				log.Fatal("Update log_DB from version 1 error: ", err)
+			}
+			_, err := setDBverStmt.Exec(2, id)
+			if err != nil {
+				log.Fatal("Update guilds_DB from version 1 error: ", err)
+			}
 		}
 	} else {
+		rows.Close()
 		log.Print("WARN: Guild not found, making row.")
 		_, err = DB.Exec("CREATE TABLE IF NOT EXISTS " + emojisTable + " (" +
 			"id BIGINT NOT NULL PRIMARY KEY," +
@@ -115,17 +141,34 @@ func LoadGuild(id *string) *config.Guild {
 			"emoji BIGINT NOT NULL," +
 			"type TINYINT NOT NULL," +
 			"value INT NOT NULL," +
-			"timeat BIGINT NOT NULL)")
+			"timeat BIGINT NOT NULL)" +
+			"bot BIT DEFAULT 0 NOT NULL,")
 		if err != nil {
 			log.Fatal("Create log table error:", err)
 		}
-		guild = config.CurrentConfig.Guild
-		_, err = insertGuildStmt.Exec(id, guild.Prefix, guild.Lang, guild.Recordbots, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd)
+		guild := config.CurrentConfig.Guild
+		_, err = insertGuildStmt.Exec(id, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd)
 		if err != nil {
 			log.Fatal("LoadGuild insert error:" + err.Error())
 		}
 	}
-	addLogStmt[*id], err = DB.Prepare("INSERT INTO " + logsTable + "(emoji,type,value,timeat) VALUES(?,?,?,?)")
+	var guild config.Guild
+	var guildID int64
+	rows, err = loadGuildStmt.Query(id)
+	defer rows.Close()
+	if err != nil {
+		log.Fatal("LoadGuild query error:" + err.Error())
+	}
+	if !rows.Next() {
+		log.Fatal("LoadGuild next returned false")
+	}
+	err = rows.Scan(&guildID, &dbVersion, &guild.Prefix, &guild.Lang, &guild.Weight.Message, &guild.Weight.Reactnew, &guild.Weight.Reactadd)
+	if err != nil {
+		log.Fatal("LoadGuild scan error:" + err.Error())
+	}
+	defer rows.Close()
+
+	addLogStmt[*id], err = DB.Prepare("INSERT INTO " + logsTable + "(emoji,type,value,timeat,bot) VALUES(?,?,?,?,?)")
 	if err != nil {
 		log.Fatal("Prepere addLogStmt error: ", err)
 	}
@@ -135,16 +178,11 @@ func LoadGuild(id *string) *config.Guild {
 	if err != nil {
 		log.Fatal("Prepere updateLogEmojiStmt error: ", err)
 	}
-	// rankingStmt[*id], err = DB.Prepare("SELECT emoji,sum(value) " +
-	// 	"FROM " + logsTable + " " +
-	// 	"WHERE timeat > datetime('now', ?) " +
-	// 	"GROUP BY emoji " +
-	// 	"ORDER BY sum(value) DESC " +
-	// 	"LIMIT ?,?")
 	rankingStmt[*id], err = DB.Prepare("SELECT emojis.id,emojis.name,emojis.description,sum(logs.value) " +
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
 		"ON emojis.id = logs.emoji AND logs.timeat > ? " +
+		"AND logs.bot <> ? " +
 		"GROUP BY emojis.id " +
 		"ORDER BY sum(logs.value) DESC " +
 		"LIMIT ?,?")
@@ -155,6 +193,7 @@ func LoadGuild(id *string) *config.Guild {
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
 		"ON emojis.id = logs.emoji AND logs.timeat > ? " +
+		"AND ( logs.bot = ? OR logs.bot = ? )" +
 		"GROUP BY emojis.id " +
 		"ORDER BY sum(logs.value) ASC " +
 		"LIMIT ?,?")
@@ -205,7 +244,7 @@ func LoadGuild(id *string) *config.Guild {
 }
 
 func SaveGuild(id *string, guild *config.Guild) error {
-	res, err := updateGuildStmt.Exec(1, guild.Prefix, guild.Lang, guild.Recordbots, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd, *id)
+	res, err := updateGuildStmt.Exec(1, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd, *id)
 	res.RowsAffected()
 	log.Print("WARN: SaveGuild error:", res)
 	if err != nil {
@@ -222,7 +261,7 @@ const (
 	REACTADD = 3
 )
 
-func AddLog(guildId *string, actionType int, emojiId *string) {
+func AddLog(guildId *string, actionType int, emojiId *string, bot bool) {
 	guild := LoadGuild(guildId)
 	var value int
 	switch actionType {
@@ -233,7 +272,7 @@ func AddLog(guildId *string, actionType int, emojiId *string) {
 	case REACTADD:
 		value = guild.Weight.Reactadd
 	}
-	_, err := addLogStmt[*guildId].Exec(emojiId, actionType, value, time.Now().Unix())
+	_, err := addLogStmt[*guildId].Exec(emojiId, actionType, value, time.Now().Unix(), bot)
 	if err != nil {
 		log.Fatal("Insert log error: ", err)
 	}
@@ -263,11 +302,18 @@ func CleanLogEmoji(guildId *string, validEmojis []string) (*int64, error) {
 }
 
 // return rows contains emoji,sum(value)
-func GetRanking(guildId *string, limit int, limitOffset int, period int64, invert bool) (*sql.Rows, error) {
+func GetRanking(guildId *string, limit int, limitOffset int, period int64, invert bool, no_bot bool, bot bool) (*sql.Rows, error) {
+	botNum := 2
+	if !no_bot {
+		botNum = 0
+	}
+	if !bot {
+		botNum = 1
+	}
 	if invert {
-		return rankingInvertStmt[*guildId].Query(time.Now().Unix()-period, limitOffset, limit)
+		return rankingInvertStmt[*guildId].Query(time.Now().Unix()-period, botNum, limitOffset, limit)
 	} else {
-		return rankingStmt[*guildId].Query(time.Now().Unix()-period, limitOffset, limit)
+		return rankingStmt[*guildId].Query(time.Now().Unix()-period, botNum, limitOffset, limit)
 	}
 }
 

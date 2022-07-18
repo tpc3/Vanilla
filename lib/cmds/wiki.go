@@ -139,11 +139,14 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		ReplyEmbed(session, orgMsg, msg)
 	case "export":
 		var (
-			invert *struct{}
-			period *int64
+			invert   *struct{}
+			period   *int64
+			bots     *struct{}
+			onlyBots *struct{}
 		)
 		if len(splitMsg) == 2 {
-			unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period}, map[string]any{"invert": &invert, "period": &period})
+			unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period, "b": &bots, "o": &onlyBots},
+				map[string]any{"invert": &invert, "period": &period, "bots": &bots, "only-bots": &onlyBots})
 			if err != nil {
 				WikiExportUsage(session, orgMsg, guild, err)
 				return
@@ -160,7 +163,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			WikiExportUsage(session, orgMsg, guild, errors.New("period must be positive"))
 			return
 		}
-		rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil)
+		rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil, (onlyBots == nil), (bots != nil || onlyBots != nil))
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return

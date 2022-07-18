@@ -32,10 +32,6 @@ func ConfigUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Value: config.Lang[guild.Lang].Usage.Config.Lang,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "bots <record bots>",
-		Value: config.Lang[guild.Lang].Usage.Config.Bots,
-	})
-	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "weight <message> <new reaction> <add reaction>",
 		Value: config.Lang[guild.Lang].Usage.Config.Weight,
 	})
@@ -54,10 +50,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "lang",
 			Value: guild.Lang,
-		})
-		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-			Name:  "bots",
-			Value: strconv.FormatBool(guild.Recordbots),
 		})
 		msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 			Name:  "weight",
@@ -82,13 +74,6 @@ func ConfigCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			ErrorReply(session, orgMsg, "unsupported language")
 			return
 		}
-	case "bots":
-		conv, err := strconv.ParseBool(split[1])
-		if err != nil {
-			ConfigUsage(session, orgMsg, guild, errors.New("failed to parse value"))
-			return
-		}
-		guild.Recordbots = conv
 	case "weight":
 		weights := strings.Split(split[1], " ")
 		if len(weights) != 3 {

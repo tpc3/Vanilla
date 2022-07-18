@@ -38,11 +38,14 @@ func ExportCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
 	splitMsg := strings.SplitN(*message, " ", 2)
 	var (
-		invert *struct{}
-		period *int64
+		invert   *struct{}
+		period   *int64
+		bots     *struct{}
+		onlyBots *struct{}
 	)
 	if len(splitMsg) == 2 {
-		unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period}, map[string]any{"invert": &invert, "period": &period})
+		unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period, "b": &bots, "o": &onlyBots},
+			map[string]any{"invert": &invert, "period": &period, "bots": &bots, "only-bots": &onlyBots})
 		if err != nil {
 			ErrorReply(session, orgMsg, err.Error())
 			return
@@ -59,7 +62,7 @@ func ExportCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 		WikiExportUsage(session, orgMsg, guild, errors.New("period must be positive"))
 		return
 	}
-	rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil)
+	rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil, (onlyBots == nil), (bots != nil || onlyBots != nil))
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 		return

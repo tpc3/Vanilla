@@ -50,13 +50,13 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 		}
 		return
 	}
-	if len(orgMsg.GetCustomEmojis()) != 0 && (guild.Recordbots || !orgMsg.Author.Bot) {
+	if len(orgMsg.GetCustomEmojis()) != 0 {
 		m := make(map[string]struct{})
 		for _, v := range orgMsg.GetCustomEmojis() {
 			m[v.ID] = struct{}{}
 		}
 		for i := range m {
-			db.AddLog(&orgMsg.GuildID, db.MSG, &i)
+			db.AddLog(&orgMsg.GuildID, db.MSG, &i, orgMsg.Author.Bot)
 		}
 	}
 	if config.CurrentConfig.Debug {

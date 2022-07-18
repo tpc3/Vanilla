@@ -52,18 +52,30 @@ func RankingUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, g
 		Name:  "-d\n--description",
 		Value: config.Lang[guild.Lang].Usage.Ranking.WithDesc,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "-b\n--bots",
+		Value: config.Lang[guild.Lang].Usage.Ranking.Bots,
+	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "-o\n--only-bots",
+		Value: config.Lang[guild.Lang].Usage.Ranking.OnlyBots,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 
 func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
 	var (
-		page   int
-		invert *struct{}
-		desc   *struct{}
-		num    *int
-		period *int64
+		page     int
+		invert   *struct{}
+		desc     *struct{}
+		num      *int
+		period   *int64
+		bots     *struct{}
+		onlyBots *struct{}
 	)
-	unnamed, err := ParseParam(*message, map[string]any{"i": &invert, "n": &num, "p": &period, "d": &desc}, map[string]any{"invert": &invert, "num": &num, "period": &period, "description": &desc})
+	unnamed, err := ParseParam(*message,
+		map[string]any{"i": &invert, "n": &num, "p": &period, "d": &desc, "b": &bots, "o": &onlyBots},
+		map[string]any{"invert": &invert, "num": &num, "period": &period, "description": &desc, "bots": &bots, "only-bots": &onlyBots})
 	if err != nil {
 		RankingUsage(session, orgMsg, guild, err)
 		return
@@ -103,7 +115,7 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		return
 	}
 	rank := *num * (page - 1)
-	rows, err := db.GetRanking(&orgMsg.GuildID, *num, rank, *period, invert != nil)
+	rows, err := db.GetRanking(&orgMsg.GuildID, *num, rank, *period, invert != nil, (onlyBots == nil), (bots != nil || onlyBots != nil))
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 		return

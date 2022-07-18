@@ -10,7 +10,6 @@ db:
 guild:
   prefix: v.
   lang: japanese
-  recordbots: false
   weight:
     message: 10
     reactnew: 10

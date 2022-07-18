@@ -62,7 +62,6 @@ type configusagestr struct {
 	Desc   string
 	Prefix string
 	Lang   string
-	Bots   string
 	Weight string
 }
 
@@ -73,6 +72,8 @@ type rankingusagestr struct {
 	Num      string
 	Period   string
 	WithDesc string
+	Bots     string
+	OnlyBots string
 }
 
 var (
@@ -112,7 +113,6 @@ func loadLang() {
 				Desc:   "各種設定を行います。\n設定項目と内容は以下を確認ください。",
 				Prefix: "コマンドの接頭詞を指定します。\nデフォルトは`" + CurrentConfig.Guild.Prefix + "`です。",
 				Lang:   "言語を指定します。\nデフォルトは`" + CurrentConfig.Guild.Lang + "`です。",
-				Bots:   "Botを記録対象にするか指定します。\nデフォルトは`" + strconv.FormatBool(CurrentConfig.Guild.Recordbots) + "`です。",
 				Weight: "それぞれの動作ごとのポイントを指定します。\nこのポイントはランキングに用いられます。\n変更したら必ずsyncを行ってください。\nデフォルトは`" + strconv.Itoa(CurrentConfig.Guild.Weight.Message) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactnew) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactadd) + "`です。",
 			},
 			Ranking: rankingusagestr{
@@ -122,6 +122,8 @@ func loadLang() {
 				Num:      "1ページに何件入れるか指定します。\n省略した場合10になります。",
 				Period:   "集計対象の期間を秒数で指定します。\n省略した場合2592000(30日)になります。",
 				WithDesc: "指定すると説明文付きで出力します。",
+				Bots:     "Botのデータを含めます。\n指定しなかった場合Botを含めず集計します。",
+				OnlyBots: "Botのみのデータを集計します。\n指定した場合Botsパラメータは無視されます。",
 			},
 			WikiDesc:   "絵文字情報をポイント順にマークダウンで出力します",
 			ExportDesc: "絵文字の名前とURLをポイント順にリストとしてファイル出力します",
@@ -171,7 +173,6 @@ func loadLang() {
 				Desc:   "Do configuration.\nItem list is below.",
 				Prefix: "Specify command prefix.\nDefaults to `" + CurrentConfig.Guild.Prefix + "`",
 				Lang:   "Specify language.\nDefaults to `" + CurrentConfig.Guild.Lang + "`",
-				Bots:   "Specify whether to record the bot.\nDefaults to `" + strconv.FormatBool(CurrentConfig.Guild.Recordbots) + "`",
 				Weight: "Specify point each action.\nDo sync command after changes.\nDefaults to `" + strconv.Itoa(CurrentConfig.Guild.Weight.Message) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactnew) + " " + strconv.Itoa(CurrentConfig.Guild.Weight.Reactadd) + "`",
 			},
 			Ranking: rankingusagestr{
@@ -181,6 +182,8 @@ func loadLang() {
 				Num:      "Specify the length of ranking per page.\nDefaults to 10.",
 				Period:   "Specify the period of summary in seconds.\nDefaults to 2592000(30 days).",
 				WithDesc: "If specify, ranking will be printed with emoji description.",
+				Bots:     "Include log of bot.\nIf not use, Exclude log of Bot",
+				OnlyBots: "use only data of bots.\nIf use this, Bots parameter will be ignored.",
 			},
 			WikiDesc:   "Export emoji ranking with description at markdown",
 			ExportDesc: "Export emoji ranking with name and URL to file",

@@ -27,10 +27,9 @@ type Config struct {
 }
 
 type Guild struct {
-	Prefix     string
-	Lang       string
-	Recordbots bool
-	Weight     struct {
+	Prefix string
+	Lang   string
+	Weight struct {
 		Message  int
 		Reactnew int
 		Reactadd int
