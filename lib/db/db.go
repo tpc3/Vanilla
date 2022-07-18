@@ -118,7 +118,10 @@ func LoadGuild(id *string) *config.Guild {
 		if dbVersion <= 1 {
 			log.Print("WARN: Updating guild from version 1")
 			_, err = DB.Exec("ALTER TABLE " + logsTable + " ADD " +
-				"bot BIT DEFAULT 0 NOT NULL")
+				"bot BIT DEFAULT 0 NOT NULL," +
+				"userid BIGINT DEFAULT 0 NOT NULL," +
+				"channelid BIGINT DEFAULT 0 NOT NULL," +
+				"messageid BIGINT DEFAULT 0 NOT NULL")
 			if err != nil {
 				log.Fatal("Update log_DB from version 1 error: ", err)
 			}
@@ -141,8 +144,11 @@ func LoadGuild(id *string) *config.Guild {
 			"emoji BIGINT NOT NULL," +
 			"type TINYINT NOT NULL," +
 			"value INT NOT NULL," +
-			"timeat BIGINT NOT NULL)" +
-			"bot BIT DEFAULT 0 NOT NULL,")
+			"timeat BIGINT NOT NULL," +
+			"bot BIT DEFAULT 0 NOT NULL," +
+			"userid BIGINT DEFAULT 0 NOT NULL," +
+			"channelid BIGINT DEFAULT 0 NOT NULL," +
+			"messageid BIGINT DEFAULT 0 NOT NULL)")
 		if err != nil {
 			log.Fatal("Create log table error:", err)
 		}
@@ -155,10 +161,10 @@ func LoadGuild(id *string) *config.Guild {
 	var guild config.Guild
 	var guildID int64
 	rows, err = loadGuildStmt.Query(id)
-	defer rows.Close()
 	if err != nil {
 		log.Fatal("LoadGuild query error:" + err.Error())
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		log.Fatal("LoadGuild next returned false")
 	}
@@ -168,7 +174,7 @@ func LoadGuild(id *string) *config.Guild {
 	}
 	defer rows.Close()
 
-	addLogStmt[*id], err = DB.Prepare("INSERT INTO " + logsTable + "(emoji,type,value,timeat,bot) VALUES(?,?,?,?,?)")
+	addLogStmt[*id], err = DB.Prepare("INSERT INTO " + logsTable + "(emoji,type,value,timeat,bot,userid,channelid,messageid) VALUES(?,?,?,?,?,?,?,?)")
 	if err != nil {
 		log.Fatal("Prepere addLogStmt error: ", err)
 	}
@@ -193,7 +199,7 @@ func LoadGuild(id *string) *config.Guild {
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
 		"ON emojis.id = logs.emoji AND logs.timeat > ? " +
-		"AND ( logs.bot = ? OR logs.bot = ? )" +
+		"AND logs.bot <> ? " +
 		"GROUP BY emojis.id " +
 		"ORDER BY sum(logs.value) ASC " +
 		"LIMIT ?,?")
@@ -261,7 +267,7 @@ const (
 	REACTADD = 3
 )
 
-func AddLog(guildId *string, actionType int, emojiId *string, bot bool) {
+func AddLog(guildId *string, actionType int, emojiId *string, bot bool, userid, channelid, messageid *string) {
 	guild := LoadGuild(guildId)
 	var value int
 	switch actionType {
@@ -272,7 +278,7 @@ func AddLog(guildId *string, actionType int, emojiId *string, bot bool) {
 	case REACTADD:
 		value = guild.Weight.Reactadd
 	}
-	_, err := addLogStmt[*guildId].Exec(emojiId, actionType, value, time.Now().Unix(), bot)
+	_, err := addLogStmt[*guildId].Exec(emojiId, actionType, value, time.Now().Unix(), bot, userid, channelid, messageid)
 	if err != nil {
 		log.Fatal("Insert log error: ", err)
 	}

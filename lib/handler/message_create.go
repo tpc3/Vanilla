@@ -56,7 +56,7 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 			m[v.ID] = struct{}{}
 		}
 		for i := range m {
-			db.AddLog(&orgMsg.GuildID, db.MSG, &i, orgMsg.Author.Bot)
+			db.AddLog(&orgMsg.GuildID, db.MSG, &i, orgMsg.Author.Bot, &orgMsg.Author.ID, &orgMsg.ChannelID, &orgMsg.ID)
 		}
 	}
 	if config.CurrentConfig.Debug {
