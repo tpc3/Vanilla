@@ -24,6 +24,7 @@ type Config struct {
 		Description string
 		Image       string
 	}
+	UserBlacklist []string `yaml:"user_blacklist"`
 }
 
 type Guild struct {

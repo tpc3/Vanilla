@@ -17,6 +17,13 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 
 	db.CacheReacted(&orgReaction.MessageID, &orgReaction.Emoji.ID)
 
+	// Ignore all reactions from blacklisted user
+	for _, v := range config.CurrentConfig.UserBlacklist {
+		if orgReaction.UserID == v {
+			return
+		}
+	}
+
 	if orgReaction.Emoji.ID != "" {
 		count, err := db.GetReacted(session, &orgReaction.ChannelID, &orgReaction.MessageID, &orgReaction.Emoji.ID)
 		if err != nil {

@@ -17,3 +17,5 @@ guild:
 kelp:
   description: ""
   image: ""
+user_blacklist:
+  - "000000000000000000" # Add here to ignore user at all

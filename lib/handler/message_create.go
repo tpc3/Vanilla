@@ -33,6 +33,14 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 	if orgMsg.Author.ID == session.State.User.ID || orgMsg.Content == "" {
 		return
 	}
+
+	// Ignore all messages from blacklisted user
+	for _, v := range config.CurrentConfig.UserBlacklist {
+		if orgMsg.Author.ID == v {
+			return
+		}
+	}
+
 	isCmd := false
 	var trimedMsg string
 	if strings.HasPrefix(orgMsg.Content, guild.Prefix) {
