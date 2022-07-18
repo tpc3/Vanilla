@@ -10,9 +10,11 @@ import (
 )
 
 func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.MessageReactionAdd) {
-	var start time.Time
 	if config.CurrentConfig.Debug {
-		start = time.Now()
+		start := time.Now()
+		defer func() {
+			log.Print("Reaction processed in ", time.Since(start).Milliseconds(), "ms.")
+		}()
 	}
 
 	db.CacheReacted(&orgReaction.MessageID, &orgReaction.Emoji.ID)
@@ -41,7 +43,4 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 		}
 	}
 
-	if config.CurrentConfig.Debug {
-		log.Print("Reaction processed in ", time.Since(start).Milliseconds(), "ms.")
-	}
 }

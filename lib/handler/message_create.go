@@ -13,18 +13,21 @@ import (
 )
 
 func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) {
-	var start time.Time
-	if config.CurrentConfig.Debug {
-		start = time.Now()
-	}
-
-	guild := db.LoadGuild(&orgMsg.GuildID)
 	defer func() {
 		if err := recover(); err != nil {
 			log.Print("Oops, ", err)
 			debug.PrintStack()
 		}
 	}()
+
+	if config.CurrentConfig.Debug {
+		start := time.Now()
+		defer func() {
+			log.Print("Message processed in ", time.Since(start).Milliseconds(), "ms.")
+		}()
+	}
+
+	guild := db.LoadGuild(&orgMsg.GuildID)
 
 	db.MessageRecieved(orgMsg.Message)
 
@@ -52,10 +55,10 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 		trimedMsg = strings.TrimPrefix(trimedMsg, " ")
 	}
 	if isCmd {
-		cmds.HandleCmd(session, orgMsg, guild, &trimedMsg)
 		if config.CurrentConfig.Debug {
-			log.Print("Processed in ", time.Since(start).Milliseconds(), "ms.")
+			log.Print("Command processing")
 		}
+		cmds.HandleCmd(session, orgMsg, guild, &trimedMsg)
 		return
 	}
 	if len(orgMsg.GetCustomEmojis()) != 0 {
@@ -66,8 +69,5 @@ func MessageCreate(session *discordgo.Session, orgMsg *discordgo.MessageCreate) 
 		for i := range m {
 			db.AddLog(&orgMsg.GuildID, db.MSG, &i, orgMsg.Author.Bot, &orgMsg.Author.ID, &orgMsg.ChannelID, &orgMsg.ID)
 		}
-	}
-	if config.CurrentConfig.Debug {
-		log.Print("Message processed in ", time.Since(start).Milliseconds(), "ms.")
 	}
 }
