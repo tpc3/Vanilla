@@ -26,6 +26,7 @@ func main() {
 		log.Print("Discordgo connection failure:", err)
 		return
 	}
+	log.Print("Started Discordgo")
 	defer discord.Close()
 	defer db.Close()
 	stop := make(chan os.Signal, 1)

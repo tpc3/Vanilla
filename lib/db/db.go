@@ -56,6 +56,10 @@ func init() {
 	} else {
 		log.Print("FINE: Guilds DB up-to-date!")
 	}
+	_, err = DB.Exec("VACUUM")
+	if err != nil {
+		log.Fatal("DB VACUUM error:", err)
+	}
 	getDBverStmt, err = DB.Prepare("SELECT db_version FROM " + config.CurrentConfig.Db.Tableprefix + "guilds WHERE " + "id = ?")
 	if err != nil {
 		log.Fatal("Prepere getDBverStmt error:", err)
