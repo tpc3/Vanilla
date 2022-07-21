@@ -31,6 +31,14 @@ func ExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Name:  "-p <period>\n--period <period>",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Period,
 	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "-b\n--bots",
+		Value: config.Lang[guild.Lang].Usage.Ranking.Bots,
+	})
+	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
+		Name:  "-o\n--only-bots",
+		Value: config.Lang[guild.Lang].Usage.Ranking.OnlyBots,
+	})
 	ReplyEmbed(session, orgMsg, msg)
 }
 
