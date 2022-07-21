@@ -63,7 +63,7 @@ func init() {
 		log.Fatal("Tableprefix is empty")
 	}
 	if CurrentConfig.LogPeriod == 0 {
-		log.Fatal("LogPeriod is empty, setting 31536000")
+		log.Print("LogPeriod is empty, setting 31536000")
 		CurrentConfig.LogPeriod = 31536000
 	}
 

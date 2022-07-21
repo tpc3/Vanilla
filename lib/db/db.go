@@ -80,6 +80,7 @@ func init() {
 	}
 	addLogStmt = map[string]*sql.Stmt{}
 	updateLogEmojiStmt = map[string]*sql.Stmt{}
+	cleanOldLogStmt = map[string]*sql.Stmt{}
 	rankingStmt = map[string]*sql.Stmt{}
 	rankingInvertStmt = map[string]*sql.Stmt{}
 	addEmojiStmt = map[string]*sql.Stmt{}
