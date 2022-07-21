@@ -19,3 +19,4 @@ kelp:
   image: ""
 user_blacklist:
   - "000000000000000000" # Add here to ignore user at all
+log_period: 31536000 # 365 days

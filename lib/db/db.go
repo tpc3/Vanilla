@@ -20,6 +20,7 @@ var updateGuildStmt *sql.Stmt
 
 var addLogStmt map[string]*sql.Stmt
 var updateLogEmojiStmt map[string]*sql.Stmt
+var cleanOldLogStmt map[string]*sql.Stmt
 var rankingStmt map[string]*sql.Stmt
 var rankingInvertStmt map[string]*sql.Stmt
 var addEmojiStmt map[string]*sql.Stmt
@@ -192,6 +193,11 @@ func LoadGuild(id *string) *config.Guild {
 	if err != nil {
 		log.Fatal("Prepere updateLogEmojiStmt error: ", err)
 	}
+	cleanOldLogStmt[*id], err = DB.Prepare("DELETE FROM " + logsTable + " " +
+		"WHERE timeat < ?")
+	if err != nil {
+		log.Fatal("Prepere cleanOldLogStmt error: ", err)
+	}
 	rankingStmt[*id], err = DB.Prepare("SELECT emojis.id,emojis.name,emojis.description,sum(logs.value) " +
 		"FROM " + emojisTable + " emojis " +
 		"LEFT OUTER JOIN " + logsTable + " logs " +
@@ -313,6 +319,15 @@ func CleanLogEmoji(guildId *string, validEmojis []string) (*int64, error) {
 		return nil, err
 	}
 	return &affect, nil
+}
+
+func CleanOldLog(guildId *string) (*int64, error) {
+	res, err := cleanOldLogStmt[*guildId].Exec(time.Now().Unix() - config.CurrentConfig.LogPeriod)
+	if err != nil {
+		return nil, err
+	}
+	num, err := res.RowsAffected()
+	return &num, err
 }
 
 // return rows contains emoji,sum(value)

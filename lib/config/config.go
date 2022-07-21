@@ -25,6 +25,7 @@ type Config struct {
 		Image       string
 	}
 	UserBlacklist []string `yaml:"user_blacklist"`
+	LogPeriod     int64    `yaml:"log_period"`
 }
 
 type Guild struct {
@@ -60,6 +61,10 @@ func init() {
 	}
 	if CurrentConfig.Db.Tableprefix == "" {
 		log.Fatal("Tableprefix is empty")
+	}
+	if CurrentConfig.LogPeriod == 0 {
+		log.Fatal("LogPeriod is empty, setting 31536000")
+		CurrentConfig.LogPeriod = 31536000
 	}
 
 	loadLang()

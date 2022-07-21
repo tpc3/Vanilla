@@ -37,17 +37,19 @@ type usagestr struct {
 }
 
 type syncstr struct {
-	Title            string
-	NewEmoji         string
-	IDChangedEmoji   string
-	NameChangedEmoji string
-	DeletedEmoji     string
-	OverEmoji        string
-	ToCleanEmoji     string
-	CleanLogTitle    string
-	CleanLogDesc     string
-	WeightTitle      string
-	WeightDesc       string
+	Title                string
+	NewEmoji             string
+	IDChangedEmoji       string
+	NameChangedEmoji     string
+	DeletedEmoji         string
+	OverEmoji            string
+	ToCleanEmoji         string
+	CleanOldLogTitle     string
+	CleanOldLogDesc      string
+	CleanInvalidLogTitle string
+	CleanInvalidLogDesc  string
+	WeightTitle          string
+	WeightDesc           string
 }
 
 type wikistr struct {
@@ -88,17 +90,19 @@ func loadLang() {
 		Ranking:  "ランキング",
 		CurrConf: "現在の設定",
 		Sync: syncstr{
-			Title:            "更新結果",
-			NewEmoji:         "新しく検出された絵文字",
-			IDChangedEmoji:   "登録され直した絵文字",
-			NameChangedEmoji: "名前が変更された絵文字",
-			DeletedEmoji:     "削除された絵文字",
-			OverEmoji:        "...残り: ",
-			ToCleanEmoji:     "これらの絵文字をDBから削除するには以下のコマンドを実行してください",
-			CleanLogTitle:    "無効なログの削除",
-			CleanLogDesc:     "件の無効なログを削除しました",
-			WeightTitle:      "重みの変更",
-			WeightDesc:       "件のログを更新しました",
+			Title:                "更新結果",
+			NewEmoji:             "新しく検出された絵文字",
+			IDChangedEmoji:       "登録され直した絵文字",
+			NameChangedEmoji:     "名前が変更された絵文字",
+			DeletedEmoji:         "削除された絵文字",
+			OverEmoji:            "...残り: ",
+			ToCleanEmoji:         "これらの絵文字をDBから削除するには以下のコマンドを実行してください",
+			CleanOldLogTitle:     "古いログの削除",
+			CleanOldLogDesc:      "件の古いログを削除しました",
+			CleanInvalidLogTitle: "無効なログの削除",
+			CleanInvalidLogDesc:  "件の無効なログを削除しました",
+			WeightTitle:          "重みの変更",
+			WeightDesc:           "件のログを更新しました",
 		},
 		Wiki: wikistr{
 			Title:       "インポート成功",
@@ -148,17 +152,19 @@ func loadLang() {
 		Ranking:  "Ranking",
 		CurrConf: "Current config",
 		Sync: syncstr{
-			Title:            "Sync result",
-			NewEmoji:         "Newly detected emoji",
-			IDChangedEmoji:   "ID changed emoji",
-			NameChangedEmoji: "Name changed emoji",
-			DeletedEmoji:     "Deleted emoji",
-			OverEmoji:        "...Remain: ",
-			ToCleanEmoji:     "To delete those emoji, type below command",
-			CleanLogTitle:    "Delete invalid emoji",
-			CleanLogDesc:     " invalid logs deleted",
-			WeightTitle:      "Update weight",
-			WeightDesc:       " log updated",
+			Title:                "Sync result",
+			NewEmoji:             "Newly detected emoji",
+			IDChangedEmoji:       "ID changed emoji",
+			NameChangedEmoji:     "Name changed emoji",
+			DeletedEmoji:         "Deleted emoji",
+			OverEmoji:            "...Remain: ",
+			ToCleanEmoji:         "To delete those emoji, type below command",
+			CleanOldLogTitle:     "Delete old logs",
+			CleanOldLogDesc:      " old logs deleted",
+			CleanInvalidLogTitle: "Delete invalid logs",
+			CleanInvalidLogDesc:  " invalid logs deleted",
+			WeightTitle:          "Update weight",
+			WeightDesc:           " log updated",
 		},
 		Wiki: wikistr{
 			Title:       "Import successful",

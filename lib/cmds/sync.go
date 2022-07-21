@@ -139,6 +139,19 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 	result.Description += "check emoji: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
 	start = time.Now()
+	updated, err := db.CleanOldLog(&orgMsg.GuildID)
+	if err != nil {
+		UnknownError(session, orgMsg, &guild.Lang, err)
+		return
+	}
+	if *updated != 0 {
+		field := discordgo.MessageEmbedField{}
+		field.Name = config.Lang[guild.Lang].Sync.CleanOldLogTitle
+		field.Value = strconv.FormatInt(*updated, 10) + config.Lang[guild.Lang].Sync.CleanOldLogDesc
+		result.Fields = append(result.Fields, &field)
+	}
+	result.Description += "clean old log: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
+	start = time.Now()
 	var validEmojiID []string
 	for i := range *emojisDiscord {
 		validEmojiID = append(validEmojiID, i)
@@ -146,18 +159,18 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	for _, v := range deletedEmoji {
 		validEmojiID = append(validEmojiID, v.id)
 	}
-	updated, err := db.CleanLogEmoji(&orgMsg.GuildID, validEmojiID)
+	updated, err = db.CleanLogEmoji(&orgMsg.GuildID, validEmojiID)
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 		return
 	}
 	if *updated != 0 {
 		field := discordgo.MessageEmbedField{}
-		field.Name = config.Lang[guild.Lang].Sync.CleanLogTitle
-		field.Value = strconv.FormatInt(*updated, 10) + config.Lang[guild.Lang].Sync.CleanLogDesc
+		field.Name = config.Lang[guild.Lang].Sync.CleanInvalidLogTitle
+		field.Value = strconv.FormatInt(*updated, 10) + config.Lang[guild.Lang].Sync.CleanInvalidLogDesc
 		result.Fields = append(result.Fields, &field)
 	}
-	result.Description += "clean log: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
+	result.Description += "clean invalid log: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
 	start = time.Now()
 	updated, err = db.UpdateValue(&orgMsg.GuildID, map[int]int{db.MSG: guild.Weight.Message, db.REACTNEW: guild.Weight.Reactnew, db.REACTADD: guild.Weight.Reactadd})
 	if err != nil {
