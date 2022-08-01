@@ -6,10 +6,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// https://material.io/archive/guidelines/style/color.html#color-color-palette
 const (
 	ColorVanilla = 0xf4ebec
-	ColorPink = 0xf50057
+	ColorPink = 0xf50057	// https://material.io/archive/guidelines/style/color.html#color-color-palette
 )
 
 var UnknownErrorNum int
