@@ -8,7 +8,7 @@ import (
 
 // https://material.io/archive/guidelines/style/color.html#color-color-palette
 const (
-	ColorBlue = 0x2196F3
+	ColorVanilla = 0xf4ebec
 	ColorPink = 0xf50057
 )
 
@@ -27,6 +27,6 @@ func NewEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate) *disc
 	msg.Author.Name = session.State.User.Username
 	msg.Footer.IconURL = orgMsg.Author.AvatarURL("256")
 	msg.Footer.Text = "Request from " + orgMsg.Author.Username + " @ " + now.String()
-	msg.Color = ColorBlue
+	msg.Color = ColorVanilla
 	return msg
 }
