@@ -2,7 +2,7 @@ debug: true
 help: https://github.com/tpc3/Vanilla/wiki
 discord:
   token: "YOUR_TOKEN_HERE"
-  status: "Vanilla is running! | emoji.help"
+  status: "Vanilla is running! | v.help"
 db:
   kind: sqlite3
   parameter: ./db.sqlite
