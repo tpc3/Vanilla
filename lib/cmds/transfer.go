@@ -70,7 +70,10 @@ func TransferCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(imageResp.Body)
 		encodedImage := base64.StdEncoding.EncodeToString(buf.Bytes())
-		_, err = session.GuildEmojiCreate(orgMsg.GuildID, splitLine[0], imageType+encodedImage, nil)
+		_, err = session.GuildEmojiCreate(orgMsg.GuildID, &discordgo.EmojiParams{
+			Name:  splitLine[0],
+			Image: imageType + encodedImage,
+		})
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return
