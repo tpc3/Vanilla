@@ -14,9 +14,9 @@ func ReplyEmbed(session *discordgo.Session, orgMsg *discordgo.MessageCreate, emb
 	reply := discordgo.MessageSend{}
 	reply.Embed = embed
 	reply.Reference = orgMsg.Reference()
-	// reply.AllowedMentions = &discordgo.MessageAllowedMentions{
-	// 	RepliedUser: false,
-	// }
+	reply.AllowedMentions = &discordgo.MessageAllowedMentions{
+		RepliedUser: false,
+	}
 	_, err := session.ChannelMessageSendComplex(orgMsg.ChannelID, &reply)
 	if err != nil {
 		log.Print("Failed to send reply: ", err)
