@@ -26,6 +26,7 @@ func main() {
 		log.Print("Discordgo connection failure:", err)
 		return
 	}
+	discord.UpdateGameStatus(0, config.CurrentConfig.Discord.Status)
 	log.Print("Started Discordgo")
 	defer discord.Close()
 	defer db.Close()
