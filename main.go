@@ -14,7 +14,8 @@ import (
 var discord *discordgo.Session
 
 func main() {
-	discord, err := discordgo.New("Bot " + config.CurrentConfig.Discord.Token)
+	var err error
+	discord, err = discordgo.New("Bot " + config.CurrentConfig.Discord.Token)
 	if err != nil {
 		log.Fatal("main.go discordgo.New() failed:", err)
 	}
