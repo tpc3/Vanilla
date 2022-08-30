@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"log"
-	"strconv"
 	"strings"
 	"time"
 
@@ -31,7 +30,7 @@ var syncValueStmt map[string]*sql.Stmt
 var deleteEmojiStmt map[string]*sql.Stmt
 var deleteLogStmt map[string]*sql.Stmt
 
-const db_version = 1
+const db_version = 2
 
 func init() {
 	var err error
@@ -41,7 +40,7 @@ func init() {
 	}
 	_, err = DB.Exec("CREATE TABLE IF NOT EXISTS " + config.CurrentConfig.Db.Tableprefix + "guilds (" +
 		"id BIGINT NOT NULL PRIMARY KEY," +
-		"db_version INT DEFAULT " + strconv.Itoa(db_version) + "," +
+		"db_version INT NOT NULL," +
 		"prefix VARCHAR," +
 		"lang VARCHAR," +
 		"msgweight INT," +
@@ -72,7 +71,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Prepere loadGuildStmt error:", err)
 	}
-	insertGuildStmt, err = DB.Prepare("INSERT INTO " + config.CurrentConfig.Db.Tableprefix + "guilds(id,prefix,lang,msgweight,newreactweight,addreactweight) VALUES(?,?,?,?,?,?)")
+	insertGuildStmt, err = DB.Prepare("INSERT INTO " + config.CurrentConfig.Db.Tableprefix + "guilds(id,db_version,prefix,lang,msgweight,newreactweight,addreactweight) VALUES(?,?,?,?,?,?,?)")
 	if err != nil {
 		log.Fatal("Prepere insertGuildStmt error:", err)
 	}
@@ -167,7 +166,7 @@ func LoadGuild(id *string) *config.Guild {
 			log.Fatal("Create log table error:", err)
 		}
 		guild := config.CurrentConfig.Guild
-		_, err = insertGuildStmt.Exec(id, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd)
+		_, err = insertGuildStmt.Exec(id, db_version, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd)
 		if err != nil {
 			log.Fatal("LoadGuild insert error:" + err.Error())
 		}
