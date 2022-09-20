@@ -5,7 +5,7 @@
 
 Discord Bot to collect statistics of custom emojis.
 
-[japanese](https://github.com/tpc3/Vanilla/README-ja.md)
+[japanese](https://github.com/tpc3/Vanilla/blob/main/README-ja.md)
 
 ## Use
 ### Simple
