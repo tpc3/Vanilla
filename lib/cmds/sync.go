@@ -172,7 +172,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	}
 	result.Description += "clean invalid log: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
 	start = time.Now()
-	updated, err = db.UpdateValue(&orgMsg.GuildID, map[int]int{db.MSG: guild.Weight.Message, db.REACTNEW: guild.Weight.Reactnew, db.REACTADD: guild.Weight.Reactadd})
+	updated, err = db.UpdateValue(&orgMsg.GuildID, map[db.ActionType]int{db.MSG: guild.Weight.Message, db.REACTNEW: guild.Weight.Reactnew, db.REACTADD: guild.Weight.Reactadd})
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 		return

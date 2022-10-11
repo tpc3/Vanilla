@@ -279,13 +279,15 @@ func SaveGuild(id *string, guild *config.Guild) error {
 	return err
 }
 
+type ActionType int
+
 const (
-	MSG      = 1
-	REACTNEW = 2
-	REACTADD = 3
+	MSG      ActionType = 1
+	REACTNEW ActionType = 2
+	REACTADD ActionType = 3
 )
 
-func AddLog(guildId *string, actionType int, emojiId *string, bot bool, userid, channelid, messageid *string) {
+func AddLog(guildId *string, actionType ActionType, emojiId *string, bot bool, userid, channelid, messageid *string) {
 	guild := LoadGuild(guildId)
 	var value int
 	switch actionType {
@@ -350,7 +352,7 @@ func GetRanking(guildId *string, limit int, limitOffset int, period int64, inver
 	}
 }
 
-func UpdateValue(guildId *string, value map[int]int) (*int64, error) {
+func UpdateValue(guildId *string, value map[ActionType]int) (*int64, error) {
 	updated := int64(0)
 	for i, v := range value {
 		res, err := syncValueStmt[*guildId].Exec(v, i, v)
