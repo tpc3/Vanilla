@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -56,7 +57,11 @@ func DescCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		msg := embed.NewEmbed(session, orgMsg)
 		d, err := session.State.Emoji(orgMsg.GuildID, emoji.id)
 		if err != nil {
-			UnknownError(session, orgMsg, &guild.Lang, err)
+			if errors.Is(err, discordgo.ErrStateNotFound) {
+				ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.DeletedEmojiFound)
+			} else {
+				UnknownError(session, orgMsg, &guild.Lang, err)
+			}
 			return
 		}
 		msg.Title = d.MessageFormat() + " " + emoji.name
