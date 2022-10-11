@@ -91,8 +91,17 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				continue
 			}
 			splitEmoji := strings.SplitN(v, "\n", 3)
+			if len(splitEmoji) != 3 {
+				ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.Brokenfile)
+				return
+			}
 			name := splitEmoji[0]
-			id := strings.SplitN(splitEmoji[1], "https://cdn.discordapp.com/emojis/", 2)[1]
+			splitImage := strings.SplitN(splitEmoji[1], "https://cdn.discordapp.com/emojis/", 2)
+			if len(splitImage) != 2 {
+				ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.Brokenfile)
+				return
+			}
+			id := splitImage[1]
 			id = strings.TrimSuffix(id, ".webp)")
 			id = strings.TrimSuffix(id, ".gif)")
 			var emoji emoji
