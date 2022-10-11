@@ -21,7 +21,6 @@ func main() {
 	}
 	discord.AddHandler(handler.MessageCreate)
 	discord.AddHandler(handler.MessageReactionAdd)
-	discord.AddHandler(handler.EmojiUpdate)
 	err = discord.Open()
 	if err != nil {
 		log.Print("Discordgo connection failure:", err)

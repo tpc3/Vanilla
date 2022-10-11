@@ -84,7 +84,7 @@ func ExportCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guil
 			point       int
 		)
 		rows.Scan(&emojiId, &emojiName, &description, &point)
-		emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
+		emoji, err := session.State.Emoji(orgMsg.GuildID, emojiId)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return

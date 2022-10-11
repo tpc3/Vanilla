@@ -54,7 +54,7 @@ func DescCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "👍")
 	case "get":
 		msg := embed.NewEmbed(session, orgMsg)
-		d, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emoji.id)
+		d, err := session.State.Emoji(orgMsg.GuildID, emoji.id)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return

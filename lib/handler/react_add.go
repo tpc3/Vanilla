@@ -17,8 +17,6 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 		}()
 	}
 
-	db.CacheReacted(&orgReaction.MessageID, &orgReaction.Emoji.ID)
-
 	// Ignore all reactions from blacklisted user
 	for _, v := range config.CurrentConfig.UserBlacklist {
 		if orgReaction.UserID == v {
@@ -27,20 +25,28 @@ func MessageReactionAdd(session *discordgo.Session, orgReaction *discordgo.Messa
 	}
 
 	if orgReaction.Emoji.ID != "" {
-		count, err := db.GetReacted(session, &orgReaction.ChannelID, &orgReaction.MessageID, &orgReaction.Emoji.ID)
+		msg, err := session.State.Message(orgReaction.ChannelID, orgReaction.MessageID)
 		if err != nil {
-			log.Print("WARN: failed to get IsReacted: ", err)
-			return
+			msg, err = session.ChannelMessage(orgReaction.ChannelID, orgReaction.MessageID)
+			if err != nil {
+				log.Print("WARN: failed to get Message to check reacted: ", err)
+				return
+			}
+			err = session.State.MessageAdd(msg)
+			if err != nil {
+				log.Print("WARN: failed to state cache Message to check reacted: ", err)
+			}
 		}
-		if count <= 0 {
-			log.Print("WARN: failed to find added reaction")
-			return
+		reactType := db.REACTNEW
+		for _, v := range msg.Reactions {
+			if v.Emoji.ID == orgReaction.Emoji.ID {
+				if v.Count > 1 {
+					reactType = db.REACTADD
+				}
+				break
+			}
 		}
-		if count == 1 {
-			db.AddLog(&orgReaction.GuildID, db.REACTNEW, &orgReaction.Emoji.ID, orgReaction.Member.User.Bot, &orgReaction.UserID, &orgReaction.ChannelID, &orgReaction.MessageID)
-		} else {
-			db.AddLog(&orgReaction.GuildID, db.REACTADD, &orgReaction.Emoji.ID, orgReaction.Member.User.Bot, &orgReaction.UserID, &orgReaction.ChannelID, &orgReaction.MessageID)
-		}
+		db.AddLog(&orgReaction.GuildID, reactType, &orgReaction.Emoji.ID, orgReaction.Member.User.Bot, &orgReaction.UserID, &orgReaction.ChannelID, &orgReaction.MessageID)
 	}
 
 }

@@ -132,7 +132,7 @@ func RankingCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gui
 		)
 		rows.Scan(&emojiId, &emojiName, &description, &point)
 		field := discordgo.MessageEmbedField{}
-		emoji, err := db.GetDiscordEmoji(session, &orgMsg.GuildID, &emojiId)
+		emoji, err := session.State.Emoji(orgMsg.GuildID, emojiId)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
 			return

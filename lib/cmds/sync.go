@@ -36,7 +36,8 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		emojisDB[e.id] = e
 		emojisNameDB[e.name] = e
 	}
-	emojisDiscord, err := db.GetDiscordEmojis(session, &orgMsg.GuildID)
+	discordGuild, err := session.State.Guild(orgMsg.GuildID)
+	emojisDiscord := discordGuild.Emojis
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
 	}
@@ -46,7 +47,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	var deletedEmoji []emoji
 	var dbDel []*string
 	var dbAdd []*emoji
-	for _, v := range *emojisDiscord {
+	for _, v := range emojisDiscord {
 		if e, ok := emojisDB[v.ID]; ok {
 			delete(emojisNameDB, e.name)
 			e.discord = v
@@ -153,8 +154,8 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	result.Description += "clean old log: " + strconv.FormatInt(time.Since(start).Milliseconds(), 10) + "ms\n"
 	start = time.Now()
 	var validEmojiID []string
-	for i := range *emojisDiscord {
-		validEmojiID = append(validEmojiID, i)
+	for _, v := range emojisDiscord {
+		validEmojiID = append(validEmojiID, v.ID)
 	}
 	for _, v := range deletedEmoji {
 		validEmojiID = append(validEmojiID, v.id)

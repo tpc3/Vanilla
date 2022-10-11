@@ -102,6 +102,8 @@ func Close() {
 	}
 }
 
+var guildCache = map[string]*config.Guild{}
+
 func LoadGuild(id *string) *config.Guild {
 	val, exists := guildCache[*id]
 	if exists {
