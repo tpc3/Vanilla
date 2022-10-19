@@ -49,7 +49,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	var dbAdd []*emoji
 	for _, v := range emojisDiscord {
 		if e, ok := emojisDB[v.ID]; ok {
-			delete(emojisNameDB, e.name)
+			delete(emojisDB, e.id)
 			e.discord = v
 			if e.name != v.Name {
 				dbDel = append(dbDel, &e.id)
@@ -57,7 +57,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 				updatedEmoji = append(updatedEmoji, e)
 			}
 		} else if e, ok := emojisNameDB[v.Name]; ok {
-			delete(emojisNameDB, e.name)
+			delete(emojisDB, e.id)
 			e.discord = v
 			dbDel = append(dbDel, &e.id)
 			dbAdd = append(dbAdd, &e)
@@ -68,7 +68,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			addedEmoji = append(addedEmoji, e)
 		}
 	}
-	for _, v := range emojisNameDB {
+	for _, v := range emojisDB {
 		deletedEmoji = append(deletedEmoji, v)
 	}
 	for _, v := range dbDel {
