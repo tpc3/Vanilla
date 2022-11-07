@@ -69,6 +69,7 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		emojisRows, err := db.GetEmojis(&orgMsg.GuildID)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
+			return
 		}
 		emojisDB := map[string]emoji{}
 		emojisNameDB := map[string]emoji{}
@@ -127,12 +128,14 @@ func WikiCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 			_, err = db.DeleteEmoji(&orgMsg.GuildID, *v)
 			if err != nil {
 				UnknownError(session, orgMsg, &guild.Lang, err)
+				return
 			}
 		}
 		for _, v := range dbAdd {
 			_, err = db.AddEmoji(&orgMsg.GuildID, v.id, v.name, v.description)
 			if err != nil {
 				UnknownError(session, orgMsg, &guild.Lang, err)
+				return
 			}
 		}
 		msg := embed.NewEmbed(session, orgMsg)
