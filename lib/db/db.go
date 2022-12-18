@@ -270,9 +270,7 @@ func LoadGuild(id *string) *config.Guild {
 }
 
 func SaveGuild(id *string, guild *config.Guild) error {
-	res, err := updateGuildStmt.Exec(1, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd, *id)
-	res.RowsAffected()
-	log.Print("WARN: SaveGuild error:", res)
+	_, err := updateGuildStmt.Exec(db_version, guild.Prefix, guild.Lang, guild.Weight.Message, guild.Weight.Reactnew, guild.Weight.Reactadd, *id)
 	if err != nil {
 		log.Print("WARN: SaveGuild error:", err)
 	} else {
