@@ -27,6 +27,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	emojisRows, err := db.GetEmojis(&orgMsg.GuildID)
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
+		return
 	}
 	emojisDB := map[string]emoji{}
 	emojisNameDB := map[string]emoji{}
@@ -40,6 +41,7 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 	emojisDiscord := discordGuild.Emojis
 	if err != nil {
 		UnknownError(session, orgMsg, &guild.Lang, err)
+		return
 	}
 	var addedEmoji []emoji
 	var updatedEmoji []emoji
@@ -75,12 +77,14 @@ func SyncCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild 
 		_, err = db.DeleteEmoji(&orgMsg.GuildID, *v)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
+			return
 		}
 	}
 	for _, v := range dbAdd {
 		_, err = db.AddEmoji(&orgMsg.GuildID, v.discord.ID, v.discord.Name, v.description)
 		if err != nil {
 			UnknownError(session, orgMsg, &guild.Lang, err)
+			return
 		}
 	}
 	if len(addedEmoji) != 0 {
