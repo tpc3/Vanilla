@@ -21,7 +21,7 @@ Discord Bot to collect statistics of custom emojis.
 ### Docker
 1. [Download config.yaml](https://raw.githubusercontent.com/tpc3/Vanilla/master/config.yaml)
 1. Enter your token to config.yaml
-1. `docker run --rm -it -v $(PWD):/data ghcr.io/tpc3/vanilla`
+1. `docker run --rm -it -v $(pwd):/data ghcr.io/tpc3/vanilla`
 1. use `v.sync` command in your guild
 
 #### invite hint
