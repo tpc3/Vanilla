@@ -1,7 +1,5 @@
 FROM golang:alpine AS build
 RUN apk add git gcc musl-dev
-ARG GOARCH=amd64
-ENV GOARCH ${GOARCH}
 ENV CGO_ENABLED 1
 ADD . /go/src/Vanilla/
 WORKDIR /go/src/Vanilla
