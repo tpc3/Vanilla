@@ -98,6 +98,9 @@ func ParseParam(param string, shortParams map[string]any, longParams map[string]
 				if i+1 == len(chars) {
 					switch p := (shortParams[v]).(type) {
 					case **int:
+						if next == nil {
+							return nil, errors.New("missing value: " + v)
+						}
 						conv, err := strconv.Atoi(*next)
 						if err != nil {
 							return nil, err
@@ -105,6 +108,9 @@ func ParseParam(param string, shortParams map[string]any, longParams map[string]
 						*p = &conv
 						next = nil
 					case **int64:
+						if next == nil {
+							return nil, errors.New("missing value: " + v)
+						}
 						conv, err := strconv.ParseInt(*next, 10, 64)
 						if err != nil {
 							return nil, err
@@ -112,6 +118,9 @@ func ParseParam(param string, shortParams map[string]any, longParams map[string]
 						*p = &conv
 						next = nil
 					case **string:
+						if next == nil {
+							return nil, errors.New("missing value: " + v)
+						}
 						conv := *next
 						*p = &conv
 						next = nil
