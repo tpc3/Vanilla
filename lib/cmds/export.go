@@ -3,7 +3,6 @@ package cmds
 import (
 	"bytes"
 	"errors"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/tpc3/Vanilla/lib/config"
@@ -22,7 +21,7 @@ func ExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 	} else {
 		msg.Title = config.Lang[guild.Lang].Usage.Title + "export"
 	}
-	msg.Description += guild.Prefix + Export + " [options]\n" + config.Lang[guild.Lang].Usage.Ranking.Desc
+	msg.Description += guild.Prefix + Export + " [options]\n" + config.Lang[guild.Lang].Usage.ExportDesc
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
 		Name:  "-i\n--invert",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Invert,
@@ -44,30 +43,27 @@ func ExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 
 func ExportCmd(session *discordgo.Session, orgMsg *discordgo.MessageCreate, guild *config.Guild, message *string) {
 	session.MessageReactionAdd(orgMsg.ChannelID, orgMsg.ID, "🤔")
-	splitMsg := strings.SplitN(*message, " ", 2)
 	var (
 		invert   *struct{}
 		period   *int64
 		bots     *struct{}
 		onlyBots *struct{}
 	)
-	if len(splitMsg) == 2 {
-		unnamed, err := ParseParam(splitMsg[1], map[string]any{"i": &invert, "p": &period, "b": &bots, "o": &onlyBots},
-			map[string]any{"invert": &invert, "period": &period, "bots": &bots, "only-bots": &onlyBots})
-		if err != nil {
-			ErrorReply(session, orgMsg, err.Error())
-			return
-		}
-		if len(unnamed) != 0 {
-			ErrorReply(session, orgMsg, config.Lang[guild.Lang].Error.Syntax)
-			return
-		}
+	unnamed, err := ParseParam(*message, map[string]any{"i": &invert, "p": &period, "b": &bots, "o": &onlyBots},
+		map[string]any{"invert": &invert, "period": &period, "bots": &bots, "only-bots": &onlyBots})
+	if err != nil {
+		ExportUsage(session, orgMsg, guild, err)
+		return
+	}
+	if len(unnamed) != 0 {
+		ExportUsage(session, orgMsg, guild, errors.New("command don't accept any unnamed arguments"))
+		return
 	}
 	if period == nil {
 		period = &defaultPeriod
 	}
 	if *period < 1 {
-		WikiExportUsage(session, orgMsg, guild, errors.New("period must be positive"))
+		ExportUsage(session, orgMsg, guild, errors.New("period must be positive"))
 		return
 	}
 	rows, err := db.GetRanking(&orgMsg.GuildID, 300, 0, *period, invert != nil, (onlyBots == nil), (bots != nil || onlyBots != nil))
