@@ -20,7 +20,7 @@ func ExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		msg.Description = "`" + err.Error() + "`\n"
 		msg.Color = embed.ColorPink
 	} else {
-		msg.Title = config.Lang[guild.Lang].Usage.Title + "wiki export"
+		msg.Title = config.Lang[guild.Lang].Usage.Title + "export"
 	}
 	msg.Description += guild.Prefix + Export + " [options]\n" + config.Lang[guild.Lang].Usage.Ranking.Desc
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
@@ -28,7 +28,7 @@ func ExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, gu
 		Value: config.Lang[guild.Lang].Usage.Ranking.Invert,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "-p <period>\n--period <period>",
+		Name:  "-p <period>\n--period=<period>",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Period,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{

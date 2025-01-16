@@ -45,7 +45,7 @@ func RankingUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate, g
 		Value: config.Lang[guild.Lang].Usage.Ranking.Num,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "-p <period>\n--period <period>",
+		Name:  "-p <period>\n--period=<period>",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Period,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{

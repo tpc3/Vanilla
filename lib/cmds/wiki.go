@@ -30,7 +30,7 @@ func WikiExportUsage(session *discordgo.Session, orgMsg *discordgo.MessageCreate
 		Value: config.Lang[guild.Lang].Usage.Ranking.Invert,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
-		Name:  "-p <period>\n--period <period>",
+		Name:  "-p <period>\n--period=<period>",
 		Value: config.Lang[guild.Lang].Usage.Ranking.Period,
 	})
 	msg.Fields = append(msg.Fields, &discordgo.MessageEmbedField{
